@@ -6,7 +6,6 @@ import type { OnActionClickParams } from '#/adapter/vxe-table';
 import { onBeforeMount, ref } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-// import { MenuBadge } from '@vben-core/menu-ui';
 import { IconifyIcon } from '@vben/icons';
 import { $t } from '@vben/locales';
 
@@ -41,7 +40,6 @@ const loadRootNodes = async () => {
   isRootLoading.value = true;
   const rootData = await getMenuList();
   tableData.value = rootData;
-  console.log('rootData', tableData.value);
   gridApi.setGridOptions({
     data: tableData.value,
   });
@@ -201,7 +199,7 @@ function onDelete(row: SystemMenuApi.SystemMenu) {
     <!--  //  <FormDrawer @success="onRefresh" />-->
     <Grid>
       <template #action="{ row }">
-        <Modal />
+        <Modal width="1000" />
         <Button type="link" @click="openModal(row)">新增下级</Button>
         <Button type="link" @click="openModal(row)">修改</Button>
         <Button type="link" danger @click="deleteUser(row)">删除</Button>
@@ -229,13 +227,6 @@ function onDelete(row: SystemMenuApi.SystemMenu) {
           <span class="flex-auto">{{ $t(row.meta?.title) }}</span>
           <div class="items-center justify-end"></div>
         </div>
-        <MenuBadge
-          v-if="row.meta?.badgeType"
-          class="menu-badge"
-          :badge="row.meta.badge"
-          :badge-type="row.meta.badgeType"
-          :badge-variants="row.meta.badgeVariants"
-        />
       </template>
     </Grid>
   </Page>

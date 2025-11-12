@@ -12,6 +12,9 @@ export async function getAllMenusApi() {
 export async function getMenuList() {
   return requestClient.get<RouteRecordStringComponent[]>('/user/all-menus');
 }
+export async function isMenuNameExists() {
+  return requestClient.get<RouteRecordStringComponent[]>('/user/all-menus');
+}
 
 export async function deleteMenu() {
   return requestClient.get<RouteRecordStringComponent[]>('/user/menus');
