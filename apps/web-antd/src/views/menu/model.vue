@@ -19,14 +19,9 @@ import { getMenuTypeOptions } from '#/views/menu/data';
 const id = ref();
 
 const [Modal, modalApi] = useVbenModal({
-  class: 'custom-modal-width',
+  class: 'w-[1000px] h-[1000px]',
   draggable: true,
   title: '新增菜单',
-
-  contentClass: 'custom-modal-width',
-  footerClass: 'custom-modal-width',
-  headerClass: 'custom-modal-width',
-
   // onCancel() {
   //   console.log(111)
   //   modalApi.close();
@@ -74,7 +69,7 @@ const schema: VbenFormSchema[] = [
     },
     defaultValue: 'menu',
     fieldName: 'type',
-    formItemClass: 'col-span-2 md:col-span-2',
+   // formItemClass: 'col-span-2 md:col-span-2',
     label: '类型',
   },
   {
@@ -193,6 +188,9 @@ const schema: VbenFormSchema[] = [
   {
     component: 'InputNumber',
     fieldName: 'title',
+    componentProps: {
+      class: 'w-full',
+    },
     label: '排序',
   },
 ];
