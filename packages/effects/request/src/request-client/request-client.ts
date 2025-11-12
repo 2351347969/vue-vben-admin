@@ -59,7 +59,7 @@ class RequestClient {
     // 合并默认配置和传入的配置
     const defaultConfig: RequestClientOptions = {
       headers: {
-        'Content-Type': 'application/json;charset=utf-8',
+        'Content-Type': 'multipart/form-data',
       },
       responseReturn: 'raw',
       // 默认超时时间
