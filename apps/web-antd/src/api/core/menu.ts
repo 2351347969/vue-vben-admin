@@ -1,6 +1,6 @@
-import type {RouteRecordStringComponent} from '@vben/types';
+import type { RouteRecordStringComponent } from '@vben/types';
 
-import {requestClient} from '#/api/request';
+import { requestClient } from '#/api/request';
 
 /**
  * 获取用户所有菜单
@@ -14,15 +14,20 @@ export async function getMenuList() {
 }
 
 export async function isMenuNameExists(params: any) {
-  return requestClient.get<RouteRecordStringComponent[]>('/menu/menu-exist', {params});
+  return requestClient.get<RouteRecordStringComponent[]>('/menu/menu-exist', {
+    params,
+  });
 }
 
-export async function deleteMenu(data:any) {
+export async function deleteMenu(data: any) {
   return requestClient.post<RouteRecordStringComponent[]>('/menu/delete', data);
 }
 
 export async function saveUpdateMenu(data: any) {
-  return requestClient.post<RouteRecordStringComponent[]>('/menu/save-update', data);
+  return requestClient.post<RouteRecordStringComponent[]>(
+    '/menu/save-update',
+    data,
+  );
 }
 
 export async function SystemMenuApi() {

@@ -1,18 +1,18 @@
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 
+import type { Recordable } from '@vben-core/typings';
+
 import { h } from 'vue';
 
-import {$t, $te} from '@vben/locales';
+import { IconifyIcon } from '@vben/icons';
+import { $t, $te } from '@vben/locales';
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
+import { isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import {Button, Image, Popconfirm, Switch, Tag} from 'ant-design-vue';
+import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
 
 import { useVbenForm } from './form';
-import type {Recordable} from "@vben-core/typings";
-import {isFunction, isString} from "@vben/utils";
-
-import { IconifyIcon } from '@vben/icons';
 
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {
@@ -100,8 +100,6 @@ setupVbenVxeTable({
       },
     });
 
-
-
     vxeUI.renderer.add('CellSwitch', {
       renderTableDefault({ attrs, props }, { column, row }) {
         const loadingKey = `__loading_${column.field}`;
@@ -129,7 +127,6 @@ setupVbenVxeTable({
         return h(Switch, finallyProps);
       },
     });
-
 
     /**
      * 注册表格的操作按钮渲染器
@@ -169,10 +166,10 @@ setupVbenVxeTable({
               return presets[opt]
                 ? { code: opt, ...presets[opt], ...defaultProps }
                 : {
-                  code: opt,
-                  text: $te(`common.${opt}`) ? $t(`common.${opt}`) : opt,
-                  ...defaultProps,
-                };
+                    code: opt,
+                    text: $te(`common.${opt}`) ? $t(`common.${opt}`) : opt,
+                    ...defaultProps,
+                  };
             } else {
               return { ...defaultProps, ...presets[opt.code], ...opt };
             }
@@ -195,10 +192,10 @@ setupVbenVxeTable({
               icon: undefined,
               onClick: listen
                 ? () =>
-                  attrs?.onClick?.({
-                    code: opt.code,
-                    row,
-                  })
+                    attrs?.onClick?.({
+                      code: opt.code,
+                      row,
+                    })
                 : undefined,
             },
             {

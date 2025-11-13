@@ -1,4 +1,4 @@
-import type {Recordable, RouteRecordStringComponent} from '@vben/types';
+import type { Recordable, RouteRecordStringComponent } from '@vben/types';
 
 import { requestClient } from '#/api/request';
 
@@ -17,10 +17,9 @@ export namespace SystemRoleApi {
  * 获取角色列表数据
  */
 async function getRoleList(params: Recordable<any>) {
-  return requestClient.get<Array<SystemRoleApi.SystemRole>>(
-    '/role/list',
-    { params },
-  );
+  return requestClient.get<Array<SystemRoleApi.SystemRole>>('/role/list', {
+    params,
+  });
 }
 
 /**
@@ -31,8 +30,11 @@ async function createRole(data: Omit<SystemRoleApi.SystemRole, 'id'>) {
   return requestClient.post('/system/role', data);
 }
 
-export async function saveUpdateRole(data:any) {
-  return requestClient.post<RouteRecordStringComponent[]>('/role/save-update', data);
+export async function saveUpdateRole(data: any) {
+  return requestClient.post<RouteRecordStringComponent[]>(
+    '/role/save-update',
+    data,
+  );
 }
 
 /**

@@ -39,12 +39,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
     const values = await formApi.getValues();
     drawerApi.lock();
 
-    console.log("values", values)
+    console.log('values', values);
     saveUpdateRole({
       id: id.value,
       ...values,
-      menusIds: values.permissions.join(",")
-    }).then(() => {
+      menusIds: values.permissions.join(','),
+    })
+      .then(() => {
         emits('success');
         drawerApi.close();
       })
@@ -60,7 +61,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
       if (data) {
         formData.value = data;
-        console.log("formData", formData.value)
+        console.log('formData', formData.value);
         id.value = data.id;
       } else {
         id.value = undefined;
@@ -74,11 +75,16 @@ const [Drawer, drawerApi] = useVbenDrawer({
         const permissionsRaw = formData.value.permissions;
         // 情况1：后端返回逗号分隔字符串（如 "1,2,3"）
         if (typeof permissionsRaw === 'string') {
-          selectedPermissions = permissionsRaw.split(',').filter(Boolean).map(Number);
+          selectedPermissions = permissionsRaw
+            .split(',')
+            .filter(Boolean)
+            .map(Number);
         }
         // 情况2：后端返回数组（如 ["1","2"] 或 [1,2]）
         else if (Array.isArray(permissionsRaw)) {
-          selectedPermissions = permissionsRaw.map(item => Number(item)).filter(id => !isNaN(id));
+          selectedPermissions = permissionsRaw
+            .map(Number)
+            .filter((id) => !isNaN(id));
         }
         // 情况3：后端返回 menuIds 和 buttonIds 分开（需合并）
         // selectedPermissions = [
@@ -87,8 +93,8 @@ const [Drawer, drawerApi] = useVbenDrawer({
         // ];
       }
 
-      console.log("最终回显的权限ID数组：", selectedPermissions);
-      console.log("Tree节点数据：", permissions.value);
+      console.log('最终回显的权限ID数组：', selectedPermissions);
+      console.log('Tree节点数据：', permissions.value);
 
       // 关键4：等待 DOM 渲染完成后，设置表单值（确保 Tree 已渲染节点）
       await nextTick();

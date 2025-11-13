@@ -1,20 +1,18 @@
 <script lang="ts" setup>
-import type {VxeGridProps} from '@vben/plugins/src/vxe-table/types';
+import type { VxeGridProps } from '@vben/plugins/src/vxe-table/types';
 
-import type {OnActionClickParams} from '#/adapter/vxe-table';
+import { onBeforeMount, ref } from 'vue';
 
-import {onBeforeMount, ref} from 'vue';
+import { Page, useVbenModal } from '@vben/common-ui';
+import { IconifyIcon } from '@vben/icons';
+import { $t } from '@vben/locales';
 
-import {Page, useVbenModal} from '@vben/common-ui';
-import {IconifyIcon} from '@vben/icons';
-import {$t} from '@vben/locales';
+import { Button, message } from 'ant-design-vue';
 
-import {Button, message} from 'ant-design-vue';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { deleteMenu, getMenuList } from '#/api/core/menu';
 
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {deleteMenu, getMenuList, SystemMenuApi} from '#/api/core/menu';
-
-import {getMenuTypeOptions} from './data';
+import { getMenuTypeOptions } from './data';
 import ExtraModal from './model.vue';
 
 // import Form from './modules/form.vue';
@@ -62,7 +60,7 @@ const gridOptions: VxeGridProps<any> = {
       align: 'left',
       field: 'title',
       fixed: 'left',
-      slots: {default: 'title'},
+      slots: { default: 'title' },
       title: '标题',
       treeNode: true,
       width: 250,
@@ -75,17 +73,17 @@ const gridOptions: VxeGridProps<any> = {
     },
     {
       align: 'center',
-      cellRender: {name: 'CellTag', options: getMenuTypeOptions()},
+      cellRender: { name: 'CellTag', options: getMenuTypeOptions() },
       field: 'type',
       title: '类型',
       width: 100,
     },
-    {field: 'authCode', title: '权限标识'},
-    {field: 'path', title: '路由地址 '},
+    { field: 'authCode', title: '权限标识' },
+    { field: 'path', title: '路由地址 ' },
     {
       align: 'left',
       field: 'component',
-      formatter: ({row}) => {
+      formatter: ({ row }) => {
         switch (row.type) {
           case 'catalog':
           case 'menu': {
@@ -103,15 +101,15 @@ const gridOptions: VxeGridProps<any> = {
       minWidth: 200,
       title: '页面组件',
     },
-    {field: 'meta.icon', title: '图标'},
+    { field: 'meta.icon', title: '图标' },
     {
-      cellRender: {name: 'CellTag'},
+      cellRender: { name: 'CellTag' },
       field: 'status',
       title: '状态',
       width: 100,
     },
     {
-      slots: {default: 'action'},
+      slots: { default: 'action' },
       title: '操作',
       fixed: 'right',
       minWidth: 150,
@@ -129,7 +127,7 @@ const gridOptions: VxeGridProps<any> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({gridOptions});
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 function openModal(data: any) {
   modalApi.setData({
@@ -141,7 +139,6 @@ function openModal(data: any) {
   });
   modalApi.open();
 }
-
 
 function appendMenu(data: any) {
   modalApi.setData({
@@ -160,7 +157,7 @@ function onDelete(row: any) {
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteMenu({id: row.id})
+  deleteMenu({ id: row.id })
     .then(async () => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
@@ -178,7 +175,7 @@ function onDelete(row: any) {
     <!--  //  <FormDrawer @success="onRefresh" />-->
     <Grid>
       <template #action="{ row }">
-        <Modal width="1000"/>
+        <Modal width="1000" />
         <Button type="link" @click="appendMenu(row)">新增下级</Button>
         <Button type="link" @click="openModal(row)">修改</Button>
         <Button type="link" danger @click="onDelete(row)">删除</Button>

@@ -1,20 +1,18 @@
 <script lang="ts" setup>
-import type {Recordable} from '@vben-core/typings';
+import type { Recordable } from '@vben-core/typings';
 
-import type {VbenFormSchema} from '#/adapter/form';
+import type { VbenFormSchema } from '#/adapter/form';
 
-import {h, ref} from 'vue';
+import { h, ref } from 'vue';
 
-import {useVbenModal, z} from '@vben/common-ui';
-import {IconifyIcon} from '@vben/icons';
-import {getPopupContainer} from '@vben/utils';
+import { useVbenModal, z } from '@vben/common-ui';
+import { IconifyIcon } from '@vben/icons';
+import { getPopupContainer } from '@vben/utils';
 
-import {message} from 'ant-design-vue';
-
-import {useVbenForm} from '#/adapter/form';
-import {getMenuList, isMenuNameExists, saveUpdateMenu, saveUpdateUserApi} from '#/api';
-import {$t} from '#/locales';
-import {getMenuTypeOptions} from '#/views/menu/data';
+import { useVbenForm } from '#/adapter/form';
+import { getMenuList, isMenuNameExists, saveUpdateMenu } from '#/api';
+import { $t } from '#/locales';
+import { getMenuTypeOptions } from '#/views/menu/data';
 
 const id = ref();
 const formData = ref();
@@ -28,7 +26,7 @@ const [Modal, modalApi] = useVbenModal({
   //   modalApi.close();
   // },
   onConfirm: async () => {
-    console.log("111")
+    console.log('111');
     await formApi.validateAndSubmitForm();
     // modalApi.close();
   },
@@ -40,7 +38,7 @@ const [Modal, modalApi] = useVbenModal({
         formApi.setValues(values);
         if (values.id) {
           id.value = values.id;
-          modalApi.setState({title: '修改'});
+          modalApi.setState({ title: '修改' });
         }
       }
     }
@@ -49,10 +47,10 @@ const [Modal, modalApi] = useVbenModal({
 
 async function onSubmit(values: Record<string, any>) {
   values.id = id.value;
-  console.log(values)
+  console.log(values);
   values.metaJson = values.meta ? JSON.stringify(values.meta) : '';
-  console.log(values)
-   await saveUpdateMenu(values);
+  console.log(values);
+  await saveUpdateMenu(values);
   // 获取并调用成功回调
   const data = modalApi.getData<Record<string, any>>();
   if (data?.onSuccess) {
@@ -84,7 +82,10 @@ const schema: VbenFormSchema[] = [
       // .max(30, $t('ui.formRules.maxLength', [$t('system.menu.menuName'), 30]))
       .refine(
         async (value: string) => {
-          return !(await isMenuNameExists({name: value, id: formData.value?.id}));
+          return !(await isMenuNameExists({
+            name: value,
+            id: formData.value?.id,
+          }));
         },
         (value) => ({
           message: $t('ui.formRules.alreadyExists', [
@@ -123,14 +124,14 @@ const schema: VbenFormSchema[] = [
     label: '上级菜单',
     renderComponentContent() {
       return {
-        title({label, meta}: { label: string; meta: Recordable<any> }) {
+        title({ label, meta }: { label: string; meta: Recordable<any> }) {
           const coms = [];
           if (!label) return '';
           if (meta?.icon) {
-            coms.push(h(IconifyIcon, {class: 'size-4', icon: meta.icon}));
+            coms.push(h(IconifyIcon, { class: 'size-4', icon: meta.icon }));
           }
-          coms.push(h('span', {class: ''}, $t(label || '')));
-          return h('div', {class: 'flex items-center gap-1'}, coms);
+          coms.push(h('span', { class: '' }, $t(label || '')));
+          return h('div', { class: 'flex items-center gap-1' }, coms);
         },
       };
     },
@@ -229,8 +230,8 @@ const schema: VbenFormSchema[] = [
     componentProps: {
       buttonStyle: 'solid',
       options: [
-        {label: $t('common.enabled'), value: 1},
-        {label: $t('common.disabled'), value: 0},
+        { label: $t('common.enabled'), value: 1 },
+        { label: $t('common.disabled'), value: 0 },
       ],
       optionType: 'button',
     },
@@ -261,7 +262,7 @@ const [Form, formApi] = useVbenForm({
 </script>
 <template>
   <Modal>
-    <Form/>
+    <Form />
   </Modal>
 </template>
 
