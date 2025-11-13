@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import type { VxeGridProps } from '@vben/plugins/src/vxe-table/types';
+import type {VxeGridProps} from '@vben/plugins/src/vxe-table/types';
 
-import type { OnActionClickParams } from '#/adapter/vxe-table';
+import type {OnActionClickParams} from '#/adapter/vxe-table';
 
-import { onBeforeMount, ref } from 'vue';
+import {onBeforeMount, ref} from 'vue';
 
-import { Page, useVbenModal } from '@vben/common-ui';
-import { IconifyIcon } from '@vben/icons';
-import { $t } from '@vben/locales';
+import {Page, useVbenModal} from '@vben/common-ui';
+import {IconifyIcon} from '@vben/icons';
+import {$t} from '@vben/locales';
 
-import { Button, message } from 'ant-design-vue';
+import {Button, message} from 'ant-design-vue';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteMenu, getMenuList, SystemMenuApi } from '#/api/core/menu';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import {deleteMenu, getMenuList, SystemMenuApi} from '#/api/core/menu';
 
-import { getMenuTypeOptions } from './data';
+import {getMenuTypeOptions} from './data';
 import ExtraModal from './model.vue';
 
 // import Form from './modules/form.vue';
@@ -62,24 +62,30 @@ const gridOptions: VxeGridProps<any> = {
       align: 'left',
       field: 'title',
       fixed: 'left',
-      slots: { default: 'title' },
+      slots: {default: 'title'},
       title: '标题',
       treeNode: true,
       width: 250,
     },
     {
+      align: 'left',
+      field: 'name',
+      fixed: 'left',
+      title: '菜单名称',
+    },
+    {
       align: 'center',
-      cellRender: { name: 'CellTag', options: getMenuTypeOptions() },
+      cellRender: {name: 'CellTag', options: getMenuTypeOptions()},
       field: 'type',
       title: '类型',
       width: 100,
     },
-    { field: 'authCode', title: '权限标识' },
-    { field: 'path', title: '路由地址 ' },
+    {field: 'authCode', title: '权限标识'},
+    {field: 'path', title: '路由地址 '},
     {
       align: 'left',
       field: 'component',
-      formatter: ({ row }) => {
+      formatter: ({row}) => {
         switch (row.type) {
           case 'catalog':
           case 'menu': {
@@ -97,15 +103,15 @@ const gridOptions: VxeGridProps<any> = {
       minWidth: 200,
       title: '页面组件',
     },
-    { field: 'icon', title: '图标' },
+    {field: 'meta.icon', title: '图标'},
     {
-      cellRender: { name: 'CellTag' },
+      cellRender: {name: 'CellTag'},
       field: 'status',
       title: '状态',
       width: 100,
     },
     {
-      slots: { default: 'action' },
+      slots: {default: 'action'},
       title: '操作',
       fixed: 'right',
       minWidth: 150,
@@ -123,71 +129,44 @@ const gridOptions: VxeGridProps<any> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
-
-function onActionClick({
-  code,
-  row,
-}: OnActionClickParams<SystemMenuApi.SystemMenu>) {
-  switch (code) {
-    case 'append': {
-      onAppend(row);
-      break;
-    }
-    case 'delete': {
-      onDelete(row);
-      break;
-    }
-    case 'edit': {
-      onEdit(row);
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-}
-
-function onRefresh() {
-  gridApi.query();
-}
-
-function onEdit(row: SystemMenuApi.SystemMenu) {
-  // formDrawerApi.setData(row).open();
-}
+const [Grid, gridApi] = useVbenVxeGrid({gridOptions});
 
 function openModal(data: any) {
   modalApi.setData({
     ...data,
-    onSuccess: () => {
-      // message.success('保存成功');
-      gridApi.reload();
+    onSuccess: async () => {
+      await loadRootNodes();
+      message.info('保存成功'); // 只会执行一次
     },
   });
   modalApi.open();
 }
 
-function onCreate() {
-  //  formDrawerApi.setData({}).open();
+
+function appendMenu(data: any) {
+  modalApi.setData({
+    pid: data.id,
+    onSuccess: async () => {
+      await loadRootNodes();
+      message.info('保存成功'); // 只会执行一次
+    },
+  });
+  modalApi.open();
 }
 
-function onAppend(row: SystemMenuApi.SystemMenu) {
-  // formDrawerApi.setData({ pid: row.id }).open();
-}
-
-function onDelete(row: SystemMenuApi.SystemMenu) {
+function onDelete(row: any) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteMenu(row.id)
-    .then(() => {
+  deleteMenu({id: row.id})
+    .then(async () => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
-      onRefresh();
+      await loadRootNodes();
     })
     .catch(() => {
       hideLoading();
@@ -199,10 +178,10 @@ function onDelete(row: SystemMenuApi.SystemMenu) {
     <!--  //  <FormDrawer @success="onRefresh" />-->
     <Grid>
       <template #action="{ row }">
-        <Modal width="1000" />
-        <Button type="link" @click="openModal(row)">新增下级</Button>
+        <Modal width="1000"/>
+        <Button type="link" @click="appendMenu(row)">新增下级</Button>
         <Button type="link" @click="openModal(row)">修改</Button>
-        <Button type="link" danger @click="deleteUser(row)">删除</Button>
+        <Button type="link" danger @click="onDelete(row)">删除</Button>
       </template>
 
       <template #toolbar-tools>

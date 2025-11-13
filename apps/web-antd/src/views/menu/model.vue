@@ -1,22 +1,23 @@
 <script lang="ts" setup>
-import type { Recordable } from '@vben-core/typings';
+import type {Recordable} from '@vben-core/typings';
 
-import type { VbenFormSchema } from '#/adapter/form';
+import type {VbenFormSchema} from '#/adapter/form';
 
-import { h, ref } from 'vue';
+import {h, ref} from 'vue';
 
-import { useVbenModal, z } from '@vben/common-ui';
-import { IconifyIcon } from '@vben/icons';
-import { getPopupContainer } from '@vben/utils';
+import {useVbenModal, z} from '@vben/common-ui';
+import {IconifyIcon} from '@vben/icons';
+import {getPopupContainer} from '@vben/utils';
 
-import { message } from 'ant-design-vue';
+import {message} from 'ant-design-vue';
 
-import { useVbenForm } from '#/adapter/form';
-import { getMenuList, isMenuNameExists, saveUpdateUserApi } from '#/api';
-import { $t } from '#/locales';
-import { getMenuTypeOptions } from '#/views/menu/data';
+import {useVbenForm} from '#/adapter/form';
+import {getMenuList, isMenuNameExists, saveUpdateMenu, saveUpdateUserApi} from '#/api';
+import {$t} from '#/locales';
+import {getMenuTypeOptions} from '#/views/menu/data';
 
 const id = ref();
+const formData = ref();
 
 const [Modal, modalApi] = useVbenModal({
   class: 'w-[1000px] h-[1000px]',
@@ -26,32 +27,32 @@ const [Modal, modalApi] = useVbenModal({
   //   console.log(111)
   //   modalApi.close();
   // },
-  // onConfirm: async () => {
-  //   console.log("111")
-  //   await formApi.validateAndSubmitForm();
-  //   // modalApi.close();
-  // },
-  // onOpenChange(isOpen: boolean) {
-  //   if (isOpen) {
-  //     const values = modalApi.getData<Record<string, any>>();
-  //     if (values) {
-  //       formApi.setValues(values);
-  //       if (values.id) {
-  //         id.value = values.id;
-  //         modalApi.setState({title: '编辑用户'});
-  //       }
-  //     }
-  //   }
-  // },
+  onConfirm: async () => {
+    console.log("111")
+    await formApi.validateAndSubmitForm();
+    // modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        formData.value = values;
+        formApi.setValues(values);
+        if (values.id) {
+          id.value = values.id;
+          modalApi.setState({title: '修改'});
+        }
+      }
+    }
+  },
 });
-const formData = ref<SystemMenuApi.SystemMenu>();
 
 async function onSubmit(values: Record<string, any>) {
   values.id = id.value;
-  await saveUpdateUserApi(values);
-
-  message.info('保存成功'); // 只会执行一次
-
+  console.log(values)
+  values.metaJson = values.meta ? JSON.stringify(values.meta) : '';
+  console.log(values)
+   await saveUpdateMenu(values);
   // 获取并调用成功回调
   const data = modalApi.getData<Record<string, any>>();
   if (data?.onSuccess) {
@@ -59,6 +60,7 @@ async function onSubmit(values: Record<string, any>) {
   }
   modalApi.close();
 }
+
 const schema: VbenFormSchema[] = [
   {
     component: 'RadioGroup',
@@ -69,7 +71,7 @@ const schema: VbenFormSchema[] = [
     },
     defaultValue: 'menu',
     fieldName: 'type',
-   // formItemClass: 'col-span-2 md:col-span-2',
+    // formItemClass: 'col-span-2 md:col-span-2',
     label: '类型',
   },
   {
@@ -82,7 +84,7 @@ const schema: VbenFormSchema[] = [
       // .max(30, $t('ui.formRules.maxLength', [$t('system.menu.menuName'), 30]))
       .refine(
         async (value: string) => {
-          return !(await isMenuNameExists(value, formData.value?.id));
+          return !(await isMenuNameExists({name: value, id: formData.value?.id}));
         },
         (value) => ({
           message: $t('ui.formRules.alreadyExists', [
@@ -94,7 +96,7 @@ const schema: VbenFormSchema[] = [
   },
   {
     component: 'Input',
-    fieldName: 'title',
+    fieldName: 'meta.title',
     label: '标题',
   },
   {
@@ -121,22 +123,64 @@ const schema: VbenFormSchema[] = [
     label: '上级菜单',
     renderComponentContent() {
       return {
-        title({ label, meta }: { label: string; meta: Recordable<any> }) {
+        title({label, meta}: { label: string; meta: Recordable<any> }) {
           const coms = [];
           if (!label) return '';
           if (meta?.icon) {
-            coms.push(h(IconifyIcon, { class: 'size-4', icon: meta.icon }));
+            coms.push(h(IconifyIcon, {class: 'size-4', icon: meta.icon}));
           }
-          coms.push(h('span', { class: '' }, $t(label || '')));
-          return h('div', { class: 'flex items-center gap-1' }, coms);
+          coms.push(h('span', {class: ''}, $t(label || '')));
+          return h('div', {class: 'flex items-center gap-1'}, coms);
         },
       };
     },
   },
   {
     component: 'Input',
-    fieldName: 'title',
+    fieldName: 'path',
     label: '路由地址',
+    dependencies: {
+      show: (values) => {
+        return ['catalog', 'embedded', 'menu'].includes(values.type);
+      },
+      triggerFields: ['type'],
+    },
+  },
+  {
+    component: 'Input',
+    fieldName: 'component',
+    label: '页面组件',
+    dependencies: {
+      show: (values) => {
+        return ['menu'].includes(values.type);
+      },
+      triggerFields: ['type'],
+    },
+  },
+
+  {
+    component: 'Input',
+    fieldName: 'meta.iframeSrc',
+    label: '激活路径',
+    dependencies: {
+      show: (values) => {
+        return ['embedded'].includes(values.type);
+      },
+      triggerFields: ['type'],
+    },
+  },
+
+  {
+    component: 'Input',
+    dependencies: {
+      show: (values) => {
+        return ['link'].includes(values.type);
+      },
+      triggerFields: ['type'],
+    },
+    fieldName: 'menu.link',
+    label: $t('system.menu.linkSrc'),
+    rules: z.string().url($t('ui.formRules.invalidURL')),
   },
   {
     component: 'IconPicker',
@@ -168,16 +212,25 @@ const schema: VbenFormSchema[] = [
   },
   {
     component: 'Input',
-    fieldName: 'title',
+    fieldName: 'authCode',
     label: '权限标识',
+    dependencies: {
+      rules: (values) => {
+        return values.type === 'button' ? 'required' : null;
+      },
+      show: (values) => {
+        return ['button'].includes(values.type);
+      },
+      triggerFields: ['type'],
+    },
   },
   {
     component: 'RadioGroup',
     componentProps: {
       buttonStyle: 'solid',
       options: [
-        { label: $t('common.enabled'), value: 1 },
-        { label: $t('common.disabled'), value: 0 },
+        {label: $t('common.enabled'), value: 1},
+        {label: $t('common.disabled'), value: 0},
       ],
       optionType: 'button',
     },
@@ -187,9 +240,15 @@ const schema: VbenFormSchema[] = [
   },
   {
     component: 'InputNumber',
-    fieldName: 'title',
+    fieldName: 'meta.order',
     componentProps: {
       class: 'w-full',
+    },
+    dependencies: {
+      show: (values) => {
+        return ['catalog', 'embedded', 'menu'].includes(values.type);
+      },
+      triggerFields: ['type'],
     },
     label: '排序',
   },
@@ -202,7 +261,7 @@ const [Form, formApi] = useVbenForm({
 </script>
 <template>
   <Modal>
-    <Form />
+    <Form/>
   </Modal>
 </template>
 

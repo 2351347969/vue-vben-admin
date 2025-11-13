@@ -59,6 +59,7 @@ class RequestClient {
     // 合并默认配置和传入的配置
     const defaultConfig: RequestClientOptions = {
       headers: {
+    //    'Content-Type': 'multipart/form-data',
         'Content-Type': 'multipart/form-data',
       },
       responseReturn: 'raw',
