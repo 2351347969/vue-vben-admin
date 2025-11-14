@@ -6,8 +6,8 @@ import { useVbenModal } from '@vben/common-ui';
 import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import {getAllMenusApi, getMenuList, saveUpdateUserApi} from '#/api';
-import {getAllRoles} from "#/api/core/role";
+import { saveUpdateUserApi } from '#/api';
+import { getAllRoles } from '#/api/core/role';
 
 const id = ref();
 

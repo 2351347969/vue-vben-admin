@@ -176,7 +176,13 @@ function onDelete(row: any) {
     <Grid>
       <template #action="{ row }">
         <Modal width="1000" />
-        <Button type="link" v-if="row.type !== 'button'" @click="appendMenu(row)">新增下级</Button>
+        <Button
+          type="link"
+          v-if="row.type !== 'button'"
+          @click="appendMenu(row)"
+        >
+          新增下级
+        </Button>
         <Button type="link" @click="openModal(row)">修改</Button>
         <Button type="link" danger @click="onDelete(row)">删除</Button>
       </template>

@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import type {Recordable} from '@vben/types';
+import type { Recordable } from '@vben/types';
 
 import type {
   OnActionClickParams,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
-import type {SystemRoleApi} from '#/api/core/role';
+import type { SystemRoleApi } from '#/api/core/role';
 
-import {Page, useVbenDrawer} from '@vben/common-ui';
-import {Plus} from '@vben/icons';
+import { Page, useVbenDrawer } from '@vben/common-ui';
+import { Plus } from '@vben/icons';
 
-import {Button, message, Modal} from 'ant-design-vue';
+import { Button, message, Modal } from 'ant-design-vue';
 
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {deleteRole, getRoleList} from '#/api/core/role';
-import {$t} from '#/locales';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { deleteRole, getRoleList } from '#/api/core/role';
+import { $t } from '#/locales';
 
-import {useColumns, useGridFormSchema} from './data';
+import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
@@ -36,7 +36,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     keepSource: true,
     proxyConfig: {
       ajax: {
-        query: async ({page}, formValues) => {
+        query: async ({ page }, formValues) => {
           return await getRoleList({
             page: page.currentPage - 1,
             size: page.pageSize,
@@ -133,7 +133,7 @@ function onDelete(row: SystemRoleApi.SystemRole) {
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteRole({id: row.id})
+  deleteRole({ id: row.id })
     .then(() => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
@@ -156,11 +156,11 @@ function onCreate() {
 </script>
 <template>
   <Page auto-content-height>
-    <FormDrawer @success="onRefresh"/>
+    <FormDrawer @success="onRefresh" />
     <Grid :table-title="$t('system.role.list')">
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">
-          <Plus class="size-5"/>
+          <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('system.role.name')]) }}
         </Button>
       </template>
