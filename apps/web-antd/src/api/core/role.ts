@@ -37,12 +37,16 @@ export async function saveUpdateRole(data: any) {
   );
 }
 
+export async function getAllRoles(data: any) {
+  return requestClient.get('/role/roles', data);
+}
+
 /**
  * 删除角色
  * @param id 角色 ID
  */
-async function deleteRole(id: string) {
-  return requestClient.delete(`/system/role/${id}`);
+async function deleteRole(data: any) {
+  return requestClient.post('/role/delete', data);
 }
 
 export { createRole, deleteRole, getRoleList };

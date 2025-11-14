@@ -6,7 +6,8 @@ import { useVbenModal } from '@vben/common-ui';
 import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { saveUpdateUserApi } from '#/api';
+import {getAllMenusApi, getMenuList, saveUpdateUserApi} from '#/api';
+import {getAllRoles} from "#/api/core/role";
 
 const id = ref();
 
@@ -92,6 +93,7 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'DatePicker',
       componentProps: {
+        class: 'w-full',
         placeholder: '请输入',
         valueFormat: 'YYYY-MM-DD HH:mm:ss',
         showTime: { hour: true, minute: true, second: true },
@@ -126,20 +128,29 @@ const [Form, formApi] = useVbenForm({
     //   fieldName: 'isadmin',
     //   label: '管理员',
     // },
-    //
-    // {
-    //   component: 'Select',
-    //   componentProps: {
-    //     options: [
-    //       {label: '期限', value: 1},
-    //       {label: '管理', value: 7},
-    //     ],
-    //     placeholder: '请输入',
-    //   },
-    //   fieldName: 'type',
-    //   label: '用户类型',
-    //   rules: 'required',
-    // },
+
+    {
+      // 组件需要在 #/adapter.ts内注册，并加上类型
+      component: 'ApiSelect',
+      // 对应组件的参数
+      componentProps: {
+        class: 'w-full',
+        // 菜单接口转options格式
+        afterFetch: (data: { name: string; path: string }[]) => {
+          return data.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        },
+        // 菜单接口
+        api: getAllRoles,
+        autoSelect: 'first',
+      },
+      // 字段名
+      fieldName: 'roleId',
+      // 界面显示的label
+      label: '角色',
+    },
   ],
   showDefaultActions: false,
 });

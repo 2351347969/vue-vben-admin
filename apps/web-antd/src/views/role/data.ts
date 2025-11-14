@@ -13,6 +13,12 @@ export function useFormSchema(): VbenFormSchema[] {
       rules: 'required',
     },
     {
+      component: 'Input',
+      fieldName: 'code',
+      label: '编码',
+      rules: 'required',
+    },
+    {
       component: 'RadioGroup',
       componentProps: {
         buttonStyle: 'solid',
@@ -49,7 +55,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
       fieldName: 'name',
       label: $t('system.role.roleName'),
     },
-    { component: 'Input', fieldName: 'id', label: $t('system.role.id') },
+    { component: 'Input', fieldName: 'code', label: '角色编码' },
     {
       component: 'Select',
       componentProps: {
@@ -86,8 +92,8 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
       width: 200,
     },
     {
-      field: 'id',
-      title: $t('system.role.id'),
+      field: 'code',
+      title: '角色编码',
       width: 200,
     },
     {
