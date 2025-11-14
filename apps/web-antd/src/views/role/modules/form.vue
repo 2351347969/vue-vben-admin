@@ -43,7 +43,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
     saveUpdateRole({
       id: id.value,
       ...values,
-      menusIds: values.permissions.join(','),
+      permissions: values.permissions.join(','),
     })
       .then(() => {
         emits('success');

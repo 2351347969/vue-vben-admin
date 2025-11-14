@@ -23,6 +23,22 @@ const emits = defineEmits<{
   select: [value: FlattenedItem<Recordable<any>>];
 }>();
 
+function isNodeChecked(item: FlattenedItem<Recordable<any>>): boolean {
+  if (isNodeDisabled(item)) return false;
+  // 直接检查 modelValue 中是否包含当前节点的值
+  if (Array.isArray(modelValue.value)) {
+    const itemValue = get(item.value, props.valueField);
+    return modelValue.value.some((v) => String(v) === String(itemValue));
+  }
+  return false;
+}
+
+function isNodeIndeterminate(item: FlattenedItem<Recordable<any>>): boolean {
+  if (isNodeDisabled(item)) return false;
+  // 可以根据需要实现部分选中逻辑
+  return false;
+}
+
 interface InnerFlattenItem<T = Recordable<any>, P = number | string> {
   hasChildren: boolean;
   id: P;
@@ -380,9 +396,9 @@ defineExpose({
         <div class="flex items-center gap-1">
           <Checkbox
             v-if="multiple"
-            :checked="isSelected && !isNodeDisabled(item)"
+            :checked="isNodeChecked(item)"
             :disabled="isNodeDisabled(item)"
-            :indeterminate="isIndeterminate && !isNodeDisabled(item)"
+            :indeterminate="isNodeIndeterminate(item)"
             @click="
               (event: MouseEvent) => {
                 if (isNodeDisabled(item)) {
