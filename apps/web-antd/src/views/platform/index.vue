@@ -7,9 +7,10 @@ import { Page, useVbenModal } from '@vben/common-ui';
 import { Modal as antModel, Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteUserApi, getUserListApi } from '#/api';
+import { deleteBlackUserApi, getBlackUserList } from '#/api/core/black';
 
 import ExtraModal from './model.vue';
+import {deletePlatformApi, getPlatformList} from "#/api/core/platform";
 
 const [Modal, modalApi] = useVbenModal({
   // 连接抽离的组件
@@ -32,44 +33,10 @@ const formOptions: VbenFormProps = {
     {
       component: 'Input',
       //  defaultValue: '1',
-      fieldName: 'nickname',
-      label: '昵称',
+      fieldName: 'platform',
+      label: '平台名称',
     },
-    {
-      component: 'Input',
-      fieldName: 'phone',
-      label: '手机号',
-    },
-    {
-      component: 'Input',
-      fieldName: 'qq',
-      label: 'qq',
-    },
-    {
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: [
-          {
-            label: '是',
-            value: 1,
-          },
-          {
-            label: '否',
-            value: 0,
-          },
-        ],
-        placeholder: '请选择',
-      },
-      fieldName: 'expire',
-      label: '是否过期',
-      defaultValue: 0,
-    },
-    // {
-    //   component: 'DatePicker',
-    //   fieldName: 'datePicker',
-    //   label: '创建时间',
-    // },
+
   ],
   // 控制表单是否显示折叠按钮
   showCollapseButton: true,
@@ -87,11 +54,11 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   columns: [
     { title: '序号', type: 'seq', minWidth: 50 },
     // { align: 'left', title: 'Name', type: 'checkbox', width: 100 },
-    { field: 'nickname', title: '昵称', minWidth: 100 },
-    { field: 'phone', title: '手机号', minWidth: 120 },
-    { field: 'password', title: '密码', minWidth: 120 },
-    { field: 'recentOnline', title: '最近登录', minWidth: 150 },
-    { field: 'expire', title: '过期时间', minWidth: 150 },
+    { field: 'platform', title: '平台名称', minWidth: 100 },
+    { field: 'type', title: '模板类型', minWidth: 120 },
+    { field: 'platformConfig.interfaceName', title: '接口地址', minWidth: 120 },
+    { field: 'platformConfig.protocol', title: '协议类型', minWidth: 120 },
+    { field: 'platformConfig.wallet', title: '钱包类型', minWidth: 120 },
     // { field: 'expire', formatter: 'formatDateTime', title: '创建时间' },
     {
       slots: { default: 'action' },
@@ -108,7 +75,7 @@ const gridOptions: VxeTableGridOptions<RowType> = {
     ajax: {
       query: async ({ page }, formValues) => {
         //  message.success(`Query params: ${JSON.stringify(formValues)}`);
-        return await getUserListApi({
+        return await getPlatformList({
           page: page.currentPage - 1,
           size: page.pageSize,
           ...formValues,
@@ -141,6 +108,13 @@ const gridOptions: VxeTableGridOptions<RowType> = {
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
 
 function openModal(data: any) {
+
+         if (data.platformConfig) {
+          data.platformConfig.wallet =  data.platformConfig.wallet.split(",")
+        }
+    console.log("data,", data)
+
+
   modalApi.setData({
     ...data,
     onSuccess: () => {
@@ -154,15 +128,15 @@ function openModal(data: any) {
 function deleteUser(data: any) {
   antModel.confirm({
     title: '确认删除',
-    content: `确定要删除用户 "${data.nickname}" 吗？此操作不可恢复！`,
+    content: `确定要删除平台 "${data.platform}" 吗？此操作不可恢复！`,
     okText: '确认',
     cancelText: '取消',
     centered: true,
     onOk: async () => {
       try {
         // 在这里调用删除用户的API
-        await deleteUserApi({ id: data.id });
-        message.success('用户删除成功');
+        await deletePlatformApi({ id: data.id });
+        message.success('删除成功');
         gridApi.reload(); // 删除成功后刷新表格
       } catch (error) {
         message.error(`删除失败: ${error.message}`);
@@ -180,13 +154,29 @@ function deleteUser(data: any) {
     <Grid>
       <template #action="{ row }">
         <Modal />
-        <Button type="link" @click="openModal(row)" v-access:code="'UserEdit'">编辑</Button>
-        <Button type="link" danger @click="deleteUser(row)" v-access:code="'UserDelete'">删除</Button>
+
+                <Button type="link" @click="openModal(row)" v-access:code="'PlatformEdit'">编辑</Button>
+
+        <Button
+          type="link"
+          danger
+          @click="deleteUser(row)"
+          v-access:code="'PlatformDelete'"
+        >
+          删除
+        </Button>
       </template>
 
+
+
       <template #toolbar-tools>
-        <Button class="mr-2" type="primary" @click="openModal" v-access:code="'UserAdd'">
-          新增用户
+        <Button
+          class="mr-2"
+          type="primary"
+          @click="openModal"
+          v-access:code="'PlatformAdd'"
+        >
+          新增平台
         </Button>
       </template>
     </Grid>

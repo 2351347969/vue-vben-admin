@@ -35,6 +35,7 @@ const [Modal, modalApi] = useVbenModal({
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
         formData.value = values;
+        console.log(values.wallet)
         formApi.setValues(values);
         if (values.id) {
           id.value = values.id;

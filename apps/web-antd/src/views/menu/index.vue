@@ -113,7 +113,7 @@ const gridOptions: VxeGridProps<any> = {
       slots: { default: 'action' },
       title: '操作',
       fixed: 'right',
-      minWidth: 150,
+      minWidth: 250,
     },
   ],
   keepSource: true,
