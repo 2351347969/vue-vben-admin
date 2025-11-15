@@ -7,10 +7,9 @@ import { Page, useVbenModal } from '@vben/common-ui';
 import { Modal as antModel, Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteUserApi, getUserListApi } from '#/api';
+import { deleteBlackUserApi, getBlackUserList } from '#/api/core/black';
 
 import ExtraModal from './model.vue';
-import {deleteBlackUserApi, getBlackUserList} from "#/api/core/black";
 
 const [Modal, modalApi] = useVbenModal({
   // 连接抽离的组件
@@ -80,7 +79,6 @@ const formOptions: VbenFormProps = {
   submitOnEnter: false,
 };
 
-
 const gridOptions: VxeTableGridOptions<RowType> = {
   checkboxConfig: {
     highlight: true,
@@ -94,16 +92,19 @@ const gridOptions: VxeTableGridOptions<RowType> = {
     { field: 'op', title: '来源', minWidth: 120 },
     { field: 'date', title: '创建时间', minWidth: 120 },
     {
-      cellRender: { name: 'CellTag', options: [
-    {
-      color: 'default',
-      label: '未删除',
-      value: 0,
-    },
-//    { color: 'default', label: '已删除', value: 1 },
-    { color: 'warning',  label: '已删除', value: 1 },
-   // { color: 'warning', label: $t('system.menu.typeLink'), value: 'link' },
-  ] },
+      cellRender: {
+        name: 'CellTag',
+        options: [
+          {
+            color: 'default',
+            label: '未删除',
+            value: 0,
+          },
+          //    { color: 'default', label: '已删除', value: 1 },
+          { color: 'warning', label: '已删除', value: 1 },
+          // { color: 'warning', label: $t('system.menu.typeLink'), value: 'link' },
+        ],
+      },
       field: 'isDel',
       title: '是否删除',
       width: 100,
@@ -153,7 +154,6 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   rowConfig: {
     isHover: true,
   },
-
 };
 
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
@@ -198,11 +198,23 @@ function deleteUser(data: any) {
     <Grid>
       <template #action="{ row }">
         <Modal />
-        <Button type="link" danger @click="deleteUser(row)" v-access:code="'BlackUserDelete'">删除</Button>
+        <Button
+          type="link"
+          danger
+          @click="deleteUser(row)"
+          v-access:code="'BlackUserDelete'"
+        >
+          删除
+        </Button>
       </template>
 
       <template #toolbar-tools>
-        <Button class="mr-2" type="primary" @click="openModal" v-access:code="'BlackUserAdd'">
+        <Button
+          class="mr-2"
+          type="primary"
+          @click="openModal"
+          v-access:code="'BlackUserAdd'"
+        >
           新增黑名单用户
         </Button>
       </template>

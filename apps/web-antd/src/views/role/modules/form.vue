@@ -2,7 +2,6 @@
 import type { DataNode } from 'ant-design-vue/es/tree';
 
 import type { Recordable } from '@vben/types';
-import { useAccessStore } from '@vben/stores';
 
 import type { SystemRoleApi } from '#/api/core/role';
 
@@ -10,16 +9,17 @@ import { computed, nextTick, ref } from 'vue';
 
 import { Tree, useVbenDrawer } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
+import { useAccessStore } from '@vben/stores';
 
 import { Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { getAccessCodesApi } from '#/api';
 import { getMenuList } from '#/api/core/menu';
 import { saveUpdateRole } from '#/api/core/role';
 import { $t } from '#/locales';
 
 import { useFormSchema } from '../data';
-import {getAccessCodesApi} from "#/api";
 
 const emits = defineEmits(['success']);
 
@@ -47,9 +47,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
       id: id.value,
       ...values,
       permissions: values.permissions.join(','),
-    }).then(async () => {
-
-                // 获取用户信息并存储到 accessStore 中
+    })
+      .then(async () => {
+        // 获取用户信息并存储到 accessStore 中
         const accessCodes = await getAccessCodesApi();
         accessStore.setAccessCodes(accessCodes);
         drawerApi.close();

@@ -5,15 +5,15 @@ import type {
   OnActionClickParams,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
-import {saveUpdateRole, type SystemRoleApi} from '#/api/core/role';
+import type { SystemRoleApi } from '#/api/core/role';
 
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message, Modal as antModel } from 'ant-design-vue';
+import { Modal as antModel, Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteRole, getRoleList } from '#/api/core/role';
+import { deleteRole, getRoleList, saveUpdateRole } from '#/api/core/role';
 import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from './data';
@@ -116,7 +116,7 @@ async function onStatusChange(
       `你要将${row.name}的状态切换为 【${status[newStatus.toString()]}】 吗？`,
       `切换状态`,
     );
-    await saveUpdateRole( {
+    await saveUpdateRole({
       ...row,
       status: newStatus,
     });
@@ -131,8 +131,8 @@ function onEdit(row: SystemRoleApi.SystemRole) {
 }
 
 function onDelete(row: SystemRoleApi.SystemRole) {
-  console.log("进来了")
-    antModel.confirm({
+  console.log('进来了');
+  antModel.confirm({
     title: '确认删除',
     content: `确定要删除角色 "${row.name}" 吗？此操作不可恢复！`,
     okText: '确认',
@@ -152,9 +152,6 @@ function onDelete(row: SystemRoleApi.SystemRole) {
       // 用户取消删除，无需操作
     },
   });
-
-
-
 }
 
 function onRefresh() {

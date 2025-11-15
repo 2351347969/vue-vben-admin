@@ -1,5 +1,4 @@
-import { baseRequestClient, requestClient } from '#/api/request';
-import type {RouteRecordStringComponent} from "@vben-core/typings";
+import { requestClient } from '#/api/request';
 
 export namespace AuthApi {
   /** 登录接口参数 */
@@ -48,5 +47,5 @@ export async function logoutApi() {
 }
 
 export async function getAccessCodesApi() {
-  return requestClient.get('/user/codes')
+  return requestClient.get('/user/codes');
 }

@@ -6,9 +6,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { saveUpdateUserApi } from '#/api';
-import { getAllRoles } from '#/api/core/role';
-import {saveUpdateBlackUserApi} from "#/api/core/black";
+import { saveUpdateBlackUserApi } from '#/api/core/black';
 
 const id = ref();
 
@@ -61,7 +59,7 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'account',
       label: '账号',
-         rules: 'required',
+      rules: 'required',
     },
     {
       component: 'Input',
@@ -79,7 +77,7 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'op',
       label: '来源',
-    }
+    },
   ],
   showDefaultActions: false,
 });

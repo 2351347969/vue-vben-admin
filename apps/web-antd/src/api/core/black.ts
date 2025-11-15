@@ -1,8 +1,4 @@
-import type { UserInfo } from '@vben/types';
-
 import { requestClient } from '#/api/request';
-
-
 
 export namespace DemoTableApi {
   export interface PageFetchParams {

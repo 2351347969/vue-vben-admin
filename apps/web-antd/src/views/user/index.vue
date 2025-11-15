@@ -136,7 +136,6 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   rowConfig: {
     isHover: true,
   },
-
 };
 
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });

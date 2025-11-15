@@ -1,10 +1,12 @@
-import type {VbenFormSchema} from '#/adapter/form';
-import type {OnActionClickFn, VxeTableGridOptions} from '#/adapter/vxe-table';
-import type {SystemRoleApi} from '#/api';
-import {AccessControl, useAccess} from '@vben/access';
+import type { VbenFormSchema } from '#/adapter/form';
+import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { SystemRoleApi } from '#/api';
 
-const {hasAccessByCodes} = useAccess();
-import {$t} from '#/locales';
+import { useAccess } from '@vben/access';
+
+import { $t } from '#/locales';
+
+const { hasAccessByCodes } = useAccess();
 
 export function useFormSchema(): VbenFormSchema[] {
   return [
@@ -25,8 +27,8 @@ export function useFormSchema(): VbenFormSchema[] {
       componentProps: {
         buttonStyle: 'solid',
         options: [
-          {label: $t('common.enabled'), value: 1},
-          {label: $t('common.disabled'), value: 0},
+          { label: $t('common.enabled'), value: 1 },
+          { label: $t('common.disabled'), value: 0 },
         ],
         optionType: 'button',
       },
@@ -57,14 +59,14 @@ export function useGridFormSchema(): VbenFormSchema[] {
       fieldName: 'name',
       label: $t('system.role.roleName'),
     },
-    {component: 'Input', fieldName: 'code', label: '角色编码'},
+    { component: 'Input', fieldName: 'code', label: '角色编码' },
     {
       component: 'Select',
       componentProps: {
         allowClear: true,
         options: [
-          {label: $t('common.enabled'), value: 1},
-          {label: $t('common.disabled'), value: 0},
+          { label: $t('common.enabled'), value: 1 },
+          { label: $t('common.disabled'), value: 0 },
         ],
       },
       fieldName: 'status',
@@ -100,7 +102,7 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
     },
     {
       cellRender: {
-        attrs: {beforeChange: onStatusChange},
+        attrs: { beforeChange: onStatusChange },
         name: onStatusChange ? 'CellSwitch' : 'CellTag',
       },
       field: 'status',
@@ -124,11 +126,10 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
           nameField: 'name',
           nameTitle: $t('system.role.name'),
           onClick: onActionClick,
-
         },
         options: [
-          {code: 'edit', show: hasAccessByCodes(['RoleEdit'])}, //
-          {code: 'delete', show: hasAccessByCodes(['RoleDelete'])} // 隐藏删除按钮
+          { code: 'edit', show: hasAccessByCodes(['RoleEdit']) }, //
+          { code: 'delete', show: hasAccessByCodes(['RoleDelete']) }, // 隐藏删除按钮
         ],
         name: 'CellOperation',
       },

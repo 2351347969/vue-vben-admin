@@ -49,7 +49,6 @@ const loadRootNodes = async () => {
 onBeforeMount(async () => {
   await loadRootNodes();
   gridApi.grid?.setAllTreeExpand(true);
-
 });
 
 const gridOptions: VxeGridProps<any> = {
@@ -126,7 +125,6 @@ const gridOptions: VxeGridProps<any> = {
     parentField: 'pid',
     rowField: 'id',
     transform: false,
-
   },
 };
 
