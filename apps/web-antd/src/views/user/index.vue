@@ -180,12 +180,26 @@ function deleteUser(data: any) {
     <Grid>
       <template #action="{ row }">
         <Modal />
-        <Button type="link" @click="openModal(row)" v-access:code="'UserEdit'">编辑</Button>
-        <Button type="link" danger @click="deleteUser(row)" v-access:code="'UserDelete'">删除</Button>
+        <Button type="link" @click="openModal(row)" v-access:code="'UserEdit'">
+          编辑
+        </Button>
+        <Button
+          type="link"
+          danger
+          @click="deleteUser(row)"
+          v-access:code="'UserDelete'"
+        >
+          删除
+        </Button>
       </template>
 
       <template #toolbar-tools>
-        <Button class="mr-2" type="primary" @click="openModal" v-access:code="'UserAdd'">
+        <Button
+          class="mr-2"
+          type="primary"
+          @click="openModal"
+          v-access:code="'UserAdd'"
+        >
           新增用户
         </Button>
       </template>

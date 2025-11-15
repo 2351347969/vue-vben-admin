@@ -7,10 +7,9 @@ import { Page, useVbenModal } from '@vben/common-ui';
 import { Modal as antModel, Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteBlackUserApi, getBlackUserList } from '#/api/core/black';
+import { deletePlatformApi, getPlatformList } from '#/api/core/platform';
 
 import ExtraModal from './model.vue';
-import {deletePlatformApi, getPlatformList} from "#/api/core/platform";
 
 const [Modal, modalApi] = useVbenModal({
   // 连接抽离的组件
@@ -36,7 +35,6 @@ const formOptions: VbenFormProps = {
       fieldName: 'platform',
       label: '平台名称',
     },
-
   ],
   // 控制表单是否显示折叠按钮
   showCollapseButton: true,
@@ -108,12 +106,10 @@ const gridOptions: VxeTableGridOptions<RowType> = {
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
 
 function openModal(data: any) {
-
-         if (data.platformConfig) {
-          data.platformConfig.wallet =  data.platformConfig.wallet.split(",")
-        }
-    console.log("data,", data)
-
+  if (data.platformConfig) {
+    data.platformConfig.wallet = data.platformConfig.wallet.split(',');
+  }
+  console.log('data,', data);
 
   modalApi.setData({
     ...data,
@@ -155,7 +151,13 @@ function deleteUser(data: any) {
       <template #action="{ row }">
         <Modal />
 
-                <Button type="link" @click="openModal(row)" v-access:code="'PlatformEdit'">编辑</Button>
+        <Button
+          type="link"
+          @click="openModal(row)"
+          v-access:code="'PlatformEdit'"
+        >
+          编辑
+        </Button>
 
         <Button
           type="link"
@@ -166,8 +168,6 @@ function deleteUser(data: any) {
           删除
         </Button>
       </template>
-
-
 
       <template #toolbar-tools>
         <Button

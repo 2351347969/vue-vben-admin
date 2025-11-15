@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
+import { ref } from 'vue';
 
-import {useVbenModal} from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
+import { cloneDeep } from '@vben/utils';
 
-import {message} from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 
-import {useVbenForm} from '#/adapter/form';
-import {saveUpdateBlackUserApi} from '#/api/core/black';
-import {saveUpdatePlatformApi} from "#/api/core/platform";
-import {cloneDeep} from '@vben/utils';
+import { useVbenForm } from '#/adapter/form';
+import { saveUpdatePlatformApi } from '#/api/core/platform';
 
 const id = ref();
 
@@ -30,7 +29,7 @@ const [Modal, modalApi] = useVbenModal({
         formApi.setValues(values);
         if (values.id) {
           id.value = values.id;
-          modalApi.setState({title: '编辑平台'});
+          modalApi.setState({ title: '编辑平台' });
         }
       }
     }
@@ -40,18 +39,20 @@ const [Modal, modalApi] = useVbenModal({
 async function onSubmit(values: Record<string, any>) {
   values.id = id.value;
   // data.platformConfig.interface = data.platformConfig.interfaceName;
-  var data = cloneDeep(values);
+  const data = cloneDeep(values);
   if (data.platformConfig.wallet && Array.isArray(data.platformConfig.wallet)) {
     data.platformConfig.wallet = data.platformConfig.wallet.join(','); // 数组转字符串（核心代码）
   }
   if (data.platformConfig.interfaceName) {
     data.platformConfig.interface = data.platformConfig.interfaceName;
-    delete data.platformConfig.interfaceName
+    delete data.platformConfig.interfaceName;
   }
   // const { interfaceName, ...新对象名 } = 原对象;
-//  values.config.replaceAll('interfaceName', 'interface');
-  data.config = data.platformConfig ? JSON.stringify(data.platformConfig) : '{}';
-  console.log("提交参数", data)
+  //  values.config.replaceAll('interfaceName', 'interface');
+  data.config = data.platformConfig
+    ? JSON.stringify(data.platformConfig)
+    : '{}';
+  console.log('提交参数', data);
   await saveUpdatePlatformApi(data);
   message.info('保存成功'); // 只会执行一次
   // 获取并调用成功回调
@@ -93,7 +94,7 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'platformConfig.interfaceName',
       label: '接口地址',
-       rules: 'required',
+      rules: 'required',
     },
     {
       component: 'RadioGroup',
@@ -242,6 +243,6 @@ const [Form, formApi] = useVbenForm({
 </script>
 <template>
   <Modal>
-    <Form/>
+    <Form />
   </Modal>
 </template>
