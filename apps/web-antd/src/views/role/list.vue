@@ -5,12 +5,12 @@ import type {
   OnActionClickParams,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
-import type { SystemRoleApi } from '#/api/core/role';
+import {saveUpdateRole, type SystemRoleApi} from '#/api/core/role';
 
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message, Modal } from 'ant-design-vue';
+import { Button, message, Modal as antModel } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteRole, getRoleList } from '#/api/core/role';
@@ -111,16 +111,19 @@ async function onStatusChange(
     0: '禁用',
     1: '启用',
   };
-  // try {
-  //   await confirm(
-  //     `你要将${row.name}的状态切换为 【${status[newStatus.toString()]}】 吗？`,
-  //     `切换状态`,
-  //   );
-  //   await updateRole(row.id, { status: newStatus });
-  //   return true;
-  // } catch {
-  //   return false;
-  // }
+  try {
+    await confirm(
+      `你要将${row.name}的状态切换为 【${status[newStatus.toString()]}】 吗？`,
+      `切换状态`,
+    );
+    await saveUpdateRole( {
+      ...row,
+      status: newStatus,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function onEdit(row: SystemRoleApi.SystemRole) {
@@ -128,22 +131,30 @@ function onEdit(row: SystemRoleApi.SystemRole) {
 }
 
 function onDelete(row: SystemRoleApi.SystemRole) {
-  const hideLoading = message.loading({
-    content: $t('ui.actionMessage.deleting', [row.name]),
-    duration: 0,
-    key: 'action_process_msg',
+  console.log("进来了")
+    antModel.confirm({
+    title: '确认删除',
+    content: `确定要删除角色 "${row.name}" 吗？此操作不可恢复！`,
+    okText: '确认',
+    cancelText: '取消',
+    centered: true,
+    onOk: async () => {
+      try {
+        // 在这里调用删除用户的API
+        await deleteRole({ id: row.id });
+        message.success('删除成功');
+        gridApi.reload(); // 删除成功后刷新表格
+      } catch (error) {
+        message.error(`删除失败: ${error.message}`);
+      }
+    },
+    onCancel() {
+      // 用户取消删除，无需操作
+    },
   });
-  deleteRole({ id: row.id })
-    .then(() => {
-      message.success({
-        content: $t('ui.actionMessage.deleteSuccess', [row.name]),
-        key: 'action_process_msg',
-      });
-      onRefresh();
-    })
-    .catch(() => {
-      hideLoading();
-    });
+
+
+
 }
 
 function onRefresh() {
@@ -159,7 +170,7 @@ function onCreate() {
     <FormDrawer @success="onRefresh" />
     <Grid :table-title="$t('system.role.list')">
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <Button type="primary" @click="onCreate" v-access:code="'RoleAdd'">
           <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('system.role.name')]) }}
         </Button>

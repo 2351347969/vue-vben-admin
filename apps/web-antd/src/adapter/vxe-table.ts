@@ -263,9 +263,12 @@ setupVbenVxeTable({
           );
         }
 
-        const btns = operations.map((opt) =>
-          opt.code === 'delete' ? renderConfirm(opt) : renderBtn(opt),
-        );
+        // const btns = operations.map((opt) =>
+        //   opt.code === 'delete' ? renderConfirm(opt) : renderBtn(opt),
+        // );
+        //
+        const btns = operations.map((opt) => renderBtn(opt));
+
         return h(
           'div',
           {

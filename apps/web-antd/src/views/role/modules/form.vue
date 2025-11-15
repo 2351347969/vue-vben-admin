@@ -2,6 +2,7 @@
 import type { DataNode } from 'ant-design-vue/es/tree';
 
 import type { Recordable } from '@vben/types';
+import { useAccessStore } from '@vben/stores';
 
 import type { SystemRoleApi } from '#/api/core/role';
 
@@ -18,6 +19,7 @@ import { saveUpdateRole } from '#/api/core/role';
 import { $t } from '#/locales';
 
 import { useFormSchema } from '../data';
+import {getAccessCodesApi} from "#/api";
 
 const emits = defineEmits(['success']);
 
@@ -30,6 +32,7 @@ const [Form, formApi] = useVbenForm({
 
 const permissions = ref<DataNode[]>([]);
 const loadingPermissions = ref(false);
+const accessStore = useAccessStore();
 
 const id = ref();
 const [Drawer, drawerApi] = useVbenDrawer({
@@ -44,10 +47,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
       id: id.value,
       ...values,
       permissions: values.permissions.join(','),
-    })
-      .then(() => {
-        emits('success');
+    }).then(async () => {
+
+                // 获取用户信息并存储到 accessStore 中
+        const accessCodes = await getAccessCodesApi();
+        accessStore.setAccessCodes(accessCodes);
         drawerApi.close();
+        emits('success');
       })
       .catch(() => {
         drawerApi.unlock();

@@ -10,6 +10,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteUserApi, getUserListApi } from '#/api';
 
 import ExtraModal from './model.vue';
+import {deleteBlackUserApi, getBlackUserList} from "#/api/core/black";
 
 const [Modal, modalApi] = useVbenModal({
   // 连接抽离的组件
@@ -32,18 +33,18 @@ const formOptions: VbenFormProps = {
     {
       component: 'Input',
       //  defaultValue: '1',
-      fieldName: 'nickname',
-      label: '昵称',
+      fieldName: 'account',
+      label: '账号',
     },
     {
       component: 'Input',
-      fieldName: 'phone',
-      label: '手机号',
+      fieldName: 'reason',
+      label: '原因',
     },
     {
       component: 'Input',
-      fieldName: 'qq',
-      label: 'qq',
+      fieldName: 'op',
+      label: '来源',
     },
     {
       component: 'Select',
@@ -61,8 +62,8 @@ const formOptions: VbenFormProps = {
         ],
         placeholder: '请选择',
       },
-      fieldName: 'expire',
-      label: '是否过期',
+      fieldName: 'isDel',
+      label: '是否删除',
       defaultValue: 0,
     },
     // {
@@ -79,6 +80,7 @@ const formOptions: VbenFormProps = {
   submitOnEnter: false,
 };
 
+
 const gridOptions: VxeTableGridOptions<RowType> = {
   checkboxConfig: {
     highlight: true,
@@ -87,11 +89,26 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   columns: [
     { title: '序号', type: 'seq', minWidth: 50 },
     // { align: 'left', title: 'Name', type: 'checkbox', width: 100 },
-    { field: 'nickname', title: '昵称', minWidth: 100 },
-    { field: 'phone', title: '手机号', minWidth: 120 },
-    { field: 'password', title: '密码', minWidth: 120 },
-    { field: 'recentOnline', title: '最近登录', minWidth: 150 },
-    { field: 'expire', title: '过期时间', minWidth: 150 },
+    { field: 'account', title: '账号', minWidth: 100 },
+    { field: 'reason', title: '原因', minWidth: 120 },
+    { field: 'op', title: '来源', minWidth: 120 },
+    { field: 'date', title: '创建时间', minWidth: 120 },
+    {
+      cellRender: { name: 'CellTag', options: [
+    {
+      color: 'default',
+      label: '未删除',
+      value: 0,
+    },
+//    { color: 'default', label: '已删除', value: 1 },
+    { color: 'warning',  label: '已删除', value: 1 },
+   // { color: 'warning', label: $t('system.menu.typeLink'), value: 'link' },
+  ] },
+      field: 'isDel',
+      title: '是否删除',
+      width: 100,
+    },
+
     // { field: 'expire', formatter: 'formatDateTime', title: '创建时间' },
     {
       slots: { default: 'action' },
@@ -108,7 +125,7 @@ const gridOptions: VxeTableGridOptions<RowType> = {
     ajax: {
       query: async ({ page }, formValues) => {
         //  message.success(`Query params: ${JSON.stringify(formValues)}`);
-        return await getUserListApi({
+        return await getBlackUserList({
           page: page.currentPage - 1,
           size: page.pageSize,
           ...formValues,
@@ -155,15 +172,15 @@ function openModal(data: any) {
 function deleteUser(data: any) {
   antModel.confirm({
     title: '确认删除',
-    content: `确定要删除用户 "${data.nickname}" 吗？此操作不可恢复！`,
+    content: `确定要删除黑名单用户 "${data.account}" 吗？此操作不可恢复！`,
     okText: '确认',
     cancelText: '取消',
     centered: true,
     onOk: async () => {
       try {
         // 在这里调用删除用户的API
-        await deleteUserApi({ id: data.id });
-        message.success('用户删除成功');
+        await deleteBlackUserApi({ id: data.id });
+        message.success('删除成功');
         gridApi.reload(); // 删除成功后刷新表格
       } catch (error) {
         message.error(`删除失败: ${error.message}`);
@@ -181,13 +198,12 @@ function deleteUser(data: any) {
     <Grid>
       <template #action="{ row }">
         <Modal />
-        <Button type="link" @click="openModal(row)">编辑</Button>
-        <Button type="link" danger @click="deleteUser(row)">删除</Button>
+        <Button type="link" danger @click="deleteUser(row)" v-access:code="'BlackUserDelete'">删除</Button>
       </template>
 
       <template #toolbar-tools>
-        <Button class="mr-2" type="primary" @click="openModal">
-          新增用户
+        <Button class="mr-2" type="primary" @click="openModal" v-access:code="'BlackUserAdd'">
+          新增黑名单用户
         </Button>
       </template>
     </Grid>

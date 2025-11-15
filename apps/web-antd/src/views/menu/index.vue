@@ -48,6 +48,8 @@ const loadRootNodes = async () => {
 // 页面加载时自动加载根节点数据
 onBeforeMount(async () => {
   await loadRootNodes();
+  gridApi.grid?.setAllTreeExpand(true);
+
 });
 
 const gridOptions: VxeGridProps<any> = {
@@ -124,6 +126,7 @@ const gridOptions: VxeGridProps<any> = {
     parentField: 'pid',
     rowField: 'id',
     transform: false,
+
   },
 };
 
@@ -135,6 +138,7 @@ function openModal(data: any) {
     onSuccess: async () => {
       await loadRootNodes();
       message.info('保存成功'); // 只会执行一次
+      gridApi.grid?.setAllTreeExpand(true);
     },
   });
   modalApi.open();
@@ -146,6 +150,7 @@ function appendMenu(data: any) {
     onSuccess: async () => {
       await loadRootNodes();
       message.info('保存成功'); // 只会执行一次
+      gridApi.grid?.setAllTreeExpand(true);
     },
   });
   modalApi.open();
@@ -164,6 +169,7 @@ function onDelete(row: any) {
         key: 'action_process_msg',
       });
       await loadRootNodes();
+      gridApi.grid?.setAllTreeExpand(true);
     })
     .catch(() => {
       hideLoading();

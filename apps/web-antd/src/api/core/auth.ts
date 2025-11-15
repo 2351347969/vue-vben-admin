@@ -1,4 +1,5 @@
 import { baseRequestClient, requestClient } from '#/api/request';
+import type {RouteRecordStringComponent} from "@vben-core/typings";
 
 export namespace AuthApi {
   /** 登录接口参数 */
@@ -29,7 +30,7 @@ export async function loginApi(data: AuthApi.LoginParams) {
  * 刷新accessToken
  */
 export async function refreshTokenApi() {
-  return baseRequestClient.post<AuthApi.RefreshTokenResult>(
+  return requestClient.post<AuthApi.RefreshTokenResult>(
     '/oauth/refresh-token',
     {
       withCredentials: true,
@@ -41,14 +42,11 @@ export async function refreshTokenApi() {
  * 退出登录
  */
 export async function logoutApi() {
-  return baseRequestClient.post('/auth/logout', {
+  return requestClient.post('/oauth/logout', {
     withCredentials: true,
   });
 }
 
-/**
- * 获取用户权限码
- */
 export async function getAccessCodesApi() {
-  return requestClient.get<string[]>('/auth/codes');
+  return requestClient.get('/user/codes')
 }
